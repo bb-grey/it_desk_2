@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "496077179170",
+    "project_id": "it-desk-d5d17",
+    "storage_bucket": "it-desk-d5d17.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496077179170:android:0b2fe969fc976f39ec7d7b",
+        "android_client_info": {
+          "package_name": "com.bahmad.it_desk2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "496077179170-f79e41ogbcc59qd0c2jko4p1kaf112hn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bahmad.it_desk2",
+            "certificate_hash": "3b33a1da24dbbfa97afe3c8a29d8612b191c43e5"
+          }
+        },
+        {
+          "client_id": "496077179170-31bfmko08i3fkr2md8oeaaegl8ot07pk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEakavh8qXVNETpgQhqt4iTQ7a0taQE1s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "496077179170-31bfmko08i3fkr2md8oeaaegl8ot07pk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
