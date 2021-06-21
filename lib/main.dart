@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
-
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'screens/home_screen.dart';
 import 'routes.dart';
 
@@ -18,8 +18,15 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
+  // ignore: non_constant_identifier_names
+  Future<void> _I() async {
+    await FirebaseAppCheck.instance
+        .activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
+  }
+
   @override
   Widget build(BuildContext context) {
+    _I();
     return MaterialApp(
       title: kAppTitle,
       debugShowCheckedModeBanner: false,

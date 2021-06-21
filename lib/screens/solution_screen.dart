@@ -8,7 +8,7 @@ class SolutionScreen extends StatelessWidget {
     final String assetPath =
         ModalRoute.of(context)!.settings.arguments as String;
     return Scaffold(
-      body: SfPdfViewer.asset(assetPath),
+      body: SfPdfViewer.network(assetPath),
     );
   }
 }

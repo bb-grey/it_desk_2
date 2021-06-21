@@ -6,19 +6,18 @@ import 'package:it_desk2/components/login_text_field.dart';
 import 'package:it_desk2/components/login_with_google_button.dart';
 import 'package:it_desk2/constants.dart';
 import 'package:it_desk2/screens/send_message_screen.dart';
-import 'package:it_desk2/screens/signup_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  static String routeName = 'login_screen';
+class SignUpScreen extends StatefulWidget {
+  static String routeName = 'signup_screen';
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   String? email;
   String? password;
-
+  String? repeatPassword;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Login',
+                  'Sign Up',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 52.0,
@@ -63,8 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: EdgeInsets.only(top: 16.0),
                   child: LoginTextField(
-                    isPasswordField: true,
                     hint: kHintPassword,
+                    isPasswordField: true,
                     onValueChange: (value) {
                       this.password = value;
                     },
@@ -72,46 +71,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 16.0),
-                  child: LoginButton(
-                    title: 'Log in',
-                    onPress: () {
-                      _loginUser();
+                  child: LoginTextField(
+                    isPasswordField: true,
+                    hint: kHintRepeatPassword,
+                    onValueChange: (value) {
+                      this.repeatPassword = value;
                     },
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 16.0),
                   child: LoginButton(
-                    title: 'Sign Up',
+                    title: 'Register',
                     onPress: () {
-                      Navigator.pushNamed(context, SignUpScreen.routeName);
+                      if (password == repeatPassword) {
+                        _registerUser();
+                      }
                     },
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 20.0),
                   child: Text(
-                    'Forgot your login details?',
+                    'Already have an account? Login',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 24.0,
-                    left: 32.0,
-                    right: 32.0,
-                  ),
-                  child: LoginDivider(),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 24.0),
-                  child: LoginWithGoogleButton(
-                    onClick: () {
-                      Navigator.pushNamed(context, SendMessageScreen.routeName);
-                    },
                   ),
                 ),
               ],
@@ -122,20 +108,14 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _loginUser() async {
+  void _registerUser() async {
     try {
       UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email!,
         password: password!,
       );
-      Navigator.pushNamed(context, SendMessageScreen.routeName);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-    }
+      Navigator.pop(context);
+    } catch (e) {}
   }
 }

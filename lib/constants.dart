@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 const String kAppTitle = 'IT Desk';
 const String kHintEmail = 'Email address';
 const String kHintPassword = 'Password';
+const String kHintRepeatPassword = 'Repeat Password';
 // Integers
 const double kDefaultScreenPadding = 32;
 
