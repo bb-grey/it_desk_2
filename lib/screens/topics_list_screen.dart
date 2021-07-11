@@ -103,50 +103,57 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
               ),
             ),
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              return Container(
-                margin: index == 0 ? EdgeInsets.only(top: 20.0) : null,
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: GestureDetector(
-                  // onTap: () => Navigator.pushNamed(
-                  //     context, SolutionScreen.routeName,
-                  //     arguments: topics[index].assetPath),
-                  onTap: () => goViewableScreen(index),
-                  child: Card(
-                    child: ListTile(
-                      leading: Icon(Icons.question_answer_rounded),
-                      // trailing: GestureDetector(
-                      //   child: Icon(Icons.download),
-                      //   onTap: () {
-                      //     downloadFile(index);
-                      //   },
-                      // ),
-                      title: FutureBuilder(
-                        future: getFileName(index),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(snapshot.data.toString());
-                          }
-                          return Center(child: CircularProgressIndicator());
-                        },
-                      ),
-                      subtitle: FutureBuilder(
-                        future: getFileUploadDate(index),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(DateFormat.yMMMd()
-                                .format(snapshot.data as DateTime));
-                          }
-                          return Center(child: Text(''));
-                        },
-                      ),
-                    ),
+          allFiles == null
+              ? SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
+                )
+              : SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    return Container(
+                      margin: index == 0 ? EdgeInsets.only(top: 20.0) : null,
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: GestureDetector(
+                        // onTap: () => Navigator.pushNamed(
+                        //     context, SolutionScreen.routeName,
+                        //     arguments: topics[index].assetPath),
+                        onTap: () => goViewableScreen(index),
+                        child: Card(
+                          child: ListTile(
+                            leading: Icon(Icons.question_answer_rounded),
+                            // trailing: GestureDetector(
+                            //   child: Icon(Icons.download),
+                            //   onTap: () {
+                            //     downloadFile(index);
+                            //   },
+                            // ),
+                            title: FutureBuilder(
+                              future: getFileName(index),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(snapshot.data.toString());
+                                }
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              },
+                            ),
+                            subtitle: FutureBuilder(
+                              future: getFileUploadDate(index),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(DateFormat.yMMMd()
+                                      .format(snapshot.data as DateTime));
+                                }
+                                return Center(child: Text(''));
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }, childCount: allFiles!.items.length),
                 ),
-              );
-            }, childCount: allFiles!.items.length),
-          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_mailer/flutter_mailer.dart';
 import 'package:flutter/material.dart';
 
 class SendMessageScreen extends StatelessWidget {
@@ -35,10 +36,18 @@ class SendMessageScreen extends StatelessWidget {
     );
   }
 
-  void _sendMessage() {
-    FirebaseFirestore.instance.collection('questions').add({
-      'message': _messageController.text.toString(),
-    });
+  void _sendMessage() async {
+    // FirebaseFirestore.instance.collection('questions').add({
+    //   'message': _messageController.text.toString(),
+    // });
+
+    final MailOptions mailOptions = MailOptions(
+      body: _messageController.text.toString(),
+      subject: 'IT DESK Question',
+      recipients: ['bahmad.3651@gmail.com'],
+      isHTML: false,
+    );
+    await FlutterMailer.send(mailOptions);
     _messageController.clear();
   }
 }

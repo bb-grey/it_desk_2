@@ -16,8 +16,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String? email;
-  String? password;
+  String? email = '';
+  String? password = '';
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.only(top: 24.0),
                   child: LoginWithGoogleButton(
                     onClick: () {
-                      Navigator.pushNamed(context, SendMessageScreen.routeName);
+                      // Navigator.pushNamed(context, SendMessageScreen.routeName);
                     },
                   ),
                 ),
@@ -132,9 +132,17 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushNamed(context, SendMessageScreen.routeName);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No user found for that email.'),
+          ),
+        );
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Wrong password provided for that user.'),
+          ),
+        );
       }
     }
   }

@@ -16,8 +16,8 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   String? email;
-  String? password;
-  String? repeatPassword;
+  String? password = '';
+  String? repeatPassword = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,9 +84,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: LoginButton(
                     title: 'Register',
                     onPress: () {
-                      if (password == repeatPassword) {
-                        _registerUser();
+                      if (password!.length < 8) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Please enter a password greater than 8 characters.'),
+                          ),
+                        );
+                        return;
                       }
+                      if (password != repeatPassword) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Passwords do not match'),
+                          ),
+                        );
+                        return;
+                      }
+                      _registerUser();
                     },
                   ),
                 ),
