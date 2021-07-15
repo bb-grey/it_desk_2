@@ -6,8 +6,17 @@ import 'package:it_desk2/screens/topics_list_screen.dart';
 
 import '../constants.dart';
 
-class MainCategoryScreen extends StatelessWidget {
+class MainCategoryScreen extends StatefulWidget {
   static final String routeName = "main_category_screen";
+
+  @override
+  _MainCategoryScreenState createState() => _MainCategoryScreenState();
+}
+
+class _MainCategoryScreenState extends State<MainCategoryScreen> {
+  List<Category> categories = Category.categories;
+  String query = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,18 +63,31 @@ class MainCategoryScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
-                )
+                  onChanged: (value) {
+                    setState(() {
+                      query = value.toLowerCase();
+                    });
+                  },
+                  onSubmitted: (value) {
+                    setState(() {
+                      categories = Category.categories
+                          .where((element) =>
+                              element.name!.toLowerCase().contains(query))
+                          .toList();
+                    });
+                  },
+                ),
               ],
             ),
           ),
           Expanded(
             child: StaggeredGridView.countBuilder(
               crossAxisCount: 2,
-              itemCount: Category.categories.length,
+              itemCount: categories.length,
               crossAxisSpacing: 4,
               mainAxisSpacing: 4,
               itemBuilder: (context, index) {
-                return SingleCategoryCard(category: Category.categories[index]);
+                return SingleCategoryCard(category: categories[index]);
               },
               staggeredTileBuilder: (index) {
                 return StaggeredTile.count(1, index.isEven ? 1.5 : 1.0);
