@@ -18,10 +18,13 @@ class TopicsListScreen extends StatefulWidget {
 }
 
 class _TopicsListScreenState extends State<TopicsListScreen> {
+  String _query = '';
+  bool _isLoading = false;
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
 
-  firebase_storage.ListResult? allFiles;
+  // firebase_storage.ListResult? allFiles;
+  List<firebase_storage.Reference>? allFiles;
 
   Future<void> listFiles(String folderName) async {
     firebase_storage.ListResult result = await firebase_storage
@@ -31,26 +34,25 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
     // print(result.items.length)
     if (mounted) {
       setState(() {
-        allFiles = result;
+        allFiles = result.items;
       });
     }
   }
 
   Future<String> getFileName(int index) async {
     firebase_storage.FullMetadata metadata =
-        await allFiles!.items.elementAt(index).getMetadata();
+        await allFiles!.elementAt(index).getMetadata();
     return metadata.name;
   }
 
   Future<DateTime> getFileUploadDate(int index) async {
     firebase_storage.FullMetadata metadata =
-        await allFiles!.items.elementAt(index).getMetadata();
+        await allFiles!.elementAt(index).getMetadata();
     return metadata.timeCreated!;
   }
 
   Future<void> goViewableScreen(int index) async {
-    String downloadUrl =
-        await allFiles!.items.elementAt(index).getDownloadURL();
+    String downloadUrl = await allFiles!.elementAt(index).getDownloadURL();
     Navigator.pushNamed(
       context,
       SolutionScreen.routeName,
@@ -65,9 +67,75 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
     File downloadToFile = File('${appDocDirectory.path}/$fileName}');
     try {
       await firebase_storage.FirebaseStorage.instance
-          .ref(allFiles!.items.elementAt(index).fullPath)
+          .ref(allFiles!.elementAt(index).fullPath)
           .writeToFile(downloadToFile);
     } on firebase_core.FirebaseException catch (e) {}
+  }
+
+  void _showSearchSheet(String folderName) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: Icon(Icons.search),
+                  hintText: 'Search here',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                onChanged: (value) {
+                  _query = value;
+                },
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _searchFiles(folderName);
+                },
+                child: Text('Search'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _searchFiles(String folderName) async {
+    if (!_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+    firebase_storage.ListResult result = await firebase_storage
+        .FirebaseStorage.instance
+        .ref(folderName)
+        .listAll();
+    if (mounted) {
+      setState(() {
+        allFiles = result.items
+            .where((element) =>
+                element.name.toLowerCase().contains(_query.toLowerCase()))
+            .toList();
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -79,7 +147,7 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
     //     .toList();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (mounted) {
+      if (mounted && allFiles == null) {
         listFiles(category.folderName!);
       }
     });
@@ -87,6 +155,15 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: GestureDetector(
+                  child: Icon(Icons.search),
+                  onTap: () => _showSearchSheet(category.folderName!),
+                ),
+              ),
+            ],
             pinned: true,
             expandedHeight: 250,
             flexibleSpace: FlexibleSpaceBar(
@@ -103,7 +180,7 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
               ),
             ),
           ),
-          allFiles == null
+          allFiles == null || _isLoading
               ? SliverFillRemaining(
                   child: Center(
                     child: CircularProgressIndicator(),
@@ -122,12 +199,6 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                         child: Card(
                           child: ListTile(
                             leading: Icon(Icons.question_answer_rounded),
-                            // trailing: GestureDetector(
-                            //   child: Icon(Icons.download),
-                            //   onTap: () {
-                            //     downloadFile(index);
-                            //   },
-                            // ),
                             title: FutureBuilder(
                               future: getFileName(index),
                               builder: (context, snapshot) {
@@ -152,7 +223,7 @@ class _TopicsListScreenState extends State<TopicsListScreen> {
                         ),
                       ),
                     );
-                  }, childCount: allFiles!.items.length),
+                  }, childCount: allFiles!.length),
                 ),
         ],
       ),
